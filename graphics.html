@@ -1,0 +1,40 @@
+<html>
+<head>
+</head>
+</head>
+<body bgcolor="black" text="white">
+
+<p id="photon_map">
+<h3>Photon Mapping </h3>
+Photon mapping is an alternate approach to lighting. Instead of tracing objects and then finding the phong shade on them, photon mapping uses a different approach. In photon mapping the steps are as following: 
+<ul> 
+<li>Emitting photons from every light source</li> 
+<li>Storing photons in a photon map for every intersection with the scene </li> 
+<li> Normal ray tracing the scene except now when the objects are hit instead of the phong shade you color using photons stored in the neighbourhood of the point </li>
+</ul>
+<br/>
+Explaining the second step in more detail: <br/>
+Emit the photons in the whole of the scene(can be done intelligently to reduce the number of photons by only emitting photons in the direction towards the scene where there are objects). When an intersection is found then store the photon in the photon map and reflect the photon with the right equation and shoot another photon for the shadows by continuing in the same direction. Every photon when emitted has a particular energy it starts with, when absorbing or reflecting maintain the energy accordingly. For example when yellow object reflects, it has absorbed all the wavelengths of the light except yellow (which is reflected back). The energy of the photons also vary after each reflection decreasing monotonically with every collision.<br/>
+<br/>
+<table align="center">
+<tr>
+<td><img src="hitch_photon"/> </td>
+<td><img src="tentacles"/></td>
+</tr>
+</table>
+</p>
+<p id="parallel">
+<h3>Parallelization, run real time!!</h3>
+Ray tracing is a very simple parallelizeable algorithm. Since each intersection is totally mutually exclusive of the other intersection you can do them in parallel.  
+We use num_threads and give them each row to process. Threads can divide among themselves rows or columns of the whole matrix that you are trying to ray trace. 
+<img src="final.gif">
+</p>
+<p id="Integration">
+<h3>Integration with animator and putting it altogether</h3>
+We finally integrated everything with animator, and now you have a framework where you can animate using the simple framework of the animator. For your animation script, you can now ray trace each frame and how it realtime on the screen. What is more is you can add stuff like cubemaps, bumpmaps and procedural maps on the run in your animation. 
+<br/>
+<br/>
+<center><image src="integ.png" height="50%" width="50%"></center>
+</p>
+</body>
+</html>

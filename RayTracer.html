@@ -1,0 +1,209 @@
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real Time Ray Tracer Animator</title><style type="text/css">body{display:block;margin:40px
+auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0
+10px}h1,h2,h3{line-height:1.2}</style></head><body>
+<h1>A Real time Ray-Tracer Animator</h1>
+<h2> with Photon Mapping, Texture Mapping, Cubemapping and Bump Mapping support</h2>
+Written by <a href="http://www.cs.utexas.edu/~akash/">Akash Mankar</a> and <a href= "http://www.cs.utexas.edu/~nikunj/"> Nikunj Yadav </a><br>
+Fall 2012
+</center>
+<a href="gallery.html">Image Gallery</a>
+<p><hr><p>
+
+<b>Introduction</b>
+Until now in CS384G, we saw different solutions to different problems in Graphics. For example, use of Bezier curve and B-Splines in order to smoothly animate an object. Phong illumination model in order to ray trace a scene, applying various filters on an image for different types of image processing. But individually each of these concepts, had many limitations. Just smoothly animating an object doesn't make it look real good. On the other hand, ray tracer provides a high quality image but takes considerable time to render a single one. In real life, we want visualizations and animations of high quality sometimes even better than a ray tracer and also in real time. That's why we came up with the idea of this project of providing a single solution to all of the above problems. Any Ray tracer is incomplete without texture mapping, Hence we also added All kinds of texture mapping to our project too.
+</p>
+In this project, we implemented following things:
+<br>
+<ul>
+<li> 2D Texture Mapping </li>
+<li> Bump Mapping </li>
+<li> Cube Mapping </li>
+<li> Procedural/3D Textures </li>
+<li> Photon Mapping</li>
+<li> Parallelizing Ray Tracer to render real time</li>
+<li> A Real Time Ray Tracer Animator </li>
+</ul>
+
+<b>2D Texture Mapping </b>
+In CS384G, We saw 2D Texture Mapping and introduction to 3D Textures. 2D texture mapping is easy but it provides only a good way to handle Textures when parameterization of the texture co-ordinates is easy. For example, 2D Texture mapping for Sphere, Cylinder or Box is very easy but when it comes to using texture mapping for polymeshes, you need to think in different terms. We implemented 2D texture mapping for all the above objects including polymeshes and used Barycentric Coordinates to parameterize 2D Textures for trimeshes. Below are some of our outputs.
+</p>
+<table>
+<tr><td valign="center" align="center">
+<img src="Box2D.bmp" width=300 height=300><br>
+Box-Texture Mapped
+</td><td valign="center" align="center">
+<img src="Dragon2D.bmp" width=350 height=350><br>
+Dragon-Trimesh-Texture mapped with a smiley face
+</table>
+<table>
+</td><td valign="center" align="center">
+<img src="sphere2D.bmp" width=300 height=300><br>
+Sphere- TextureMapped using checkerboard
+</td></tr>
+</table>
+<br>
+
+<b>Bump Mapping </b>
+<p align="justify">
+We also added support for Bump Mapping in the Ray Tracer. For this we added a new keyword in the parser to take an image as an input for bump mapping. This image is used to calculate the gradient and the Surface normal is perturbed based on this gradient. One can add following syntax to .ray file to use bump Mapping.
+
+<pre>
+norm = bump("skin1.bmp");
+</pre> 
+</p>
+<table>
+<tr><td valign="center" align="center">
+<img src="BumpMapping.bmp" width=300 height=300><br>
+Bump Mapping
+</td><td valign="center" align="center">
+<img src="skin1.bmp" width=300 height=300><br>
+Brick Texture used
+</td></tr>
+</table>
+<br>
+
+<b>Cube Mapping </b>
+Next task on our hands was to implement cubemapping. Cubemapping provides an easy way to add environment to scenes. We added 6 textures on 6 faces of the cube and treated this as our environment map. If the ray doesn't hit the object, it hits one of the faces of the cubemap thus providing the background for the scene. Below first three images contain a cubemap each and the scene consists of a spherical mirror, thus showing the reflection of the 360 deg cubemap in the mirror.
+<table>
+<tr><td valign="center" align="center">
+<img src="earth.bmp" width=325 height=325><br>
+Earth Mirror
+</td><td valign="center" align="center">
+<img src="mirror.bmp" width=325 height=325><br>
+Scene mirror
+</table>
+<table>
+</td><td valign="center" align="center">
+<img src="Mirror_cubemap.bmp" width=325 height=325><br>
+Terrain mirror
+</td><td valign="center" align="center">
+<img src="trimesh3_cubemap.bmp" width=325 height=325><br>
+Trimesh
+</td></tr>
+</table><br>
+
+<b> Procedural Textures </b>
+There are two ways to implement 3D Textures. 
+<br>
+<ul>
+<li> 2D Stacking </li>
+<li> Procedural Textures </li>
+</ul> 
+In order to  get better effects we chose procedural textures, instead of 2D Stacking. Procedural Textures are a subset of textures. We don't use actual Texture images to map to the objects. Instead procedural texture is generated with an implicit formula which defines the texture pattern.  Though the image is not fully described, we can represent a lot more details without using a lot of storage. Actually some formulas (such as fractals) allow for infinite level of details, something that an hand drawing artist even full-time cannot achieve. There is also no limitations on the dimensions that the texture can have. <br>
+For our procedural textures, we use <b>Perlin Noise</b>, first described by Perlin in 1985. Perlin noise can be used in 1D,2D or 3D dimensions. There are a various ways to enhance Perlin noise for 3D Textures, some of the well known examples are Turbulence textures and Marble texrtures which are none other than variations of Perlin Noise. <br>
+While using Perlin noise we realize that the effect on different objects can be varied by varying the noisyness of the function and increasing the spacing of between noise.<br>
+For normal objects like sphere, cone, cylinder, Effects produced were better with lesser noise while on polymeshes ,better effects were produced by increasing the noisyness.<br>
+<table>
+<tr><td valign="center" align="center">
+<img src="normal.bmp" width=300 height=300><br>
+Spheres
+</td><td valign="center" align="center">
+<img src="proctextawesome.bmp" width=300 height=300><br>
+Spheres with Texture
+</table>
+<table> 
+</td><td valign="center" align="center">
+<img src="normal2.bmp" width=300 height=300><br>
+Spheres(2)
+</td><td valign="center" align="center">
+<img src="easy5.bmp" width=300 height=300><br>
+Spheres(2) with Proc Textures
+</td></tr>
+</table><br>
+<p>
+Following images show the effects of varying the Perlin noise on the earth cubemap. These variations could be visualized as the variations in clouds seen on a simulated Earth.
+</p>
+<table>
+<tr><td valign="center" align="center">
+<img src="proctextEarth.bmp" width=300 height=300><br>
+Earth cubemap/Less noise
+</td><td valign="center" align="center">
+<img src="Cloudplusearth.bmp" width=300 height=300><br>
+Earth cubemap/higher noise
+</td></tr>
+</table>
+<br>
+
+<p> Following images shows the effect of Procedural Textures on Trimeshes. Note that effects are much better and continuous and easier to implement as compared to parametric 2D textures </p>
+<table>
+<tr><td valign="center" align="center">
+<img src="trimesh2_3Dtex.bmp" width=300 height=300><br>
+Trimesh higher noise
+</td><td valign="center" align="center">
+<img src="trimesh2_proctext.bmp" width=300 height=300><br>
+Trimesh lesser noise
+</td></tr>
+</table><br>
+
+<b>An Artifact with CubeMap + Procedural Texture + 2D Textures</b>
+<table>
+<tr><td valign="center" align="center">
+<img src="artifact.bmp" width=400 height=400><br>
+Cubemap used-> Earth, Procedural Texture-> Perlin Noise, 2D Texture-> brick on the box
+</td></tr>
+</table>
+
+<p id="photon_map">
+<h3>Photon Mapping </h3>
+Photon mapping is an alternate approach to lighting. Instead of tracing objects and then finding the phong shade on them, photon mapping uses a different approach. In photon mapping the steps are as following: 
+<ul> 
+<li>Emitting photons from every light source</li> 
+<li>Storing photons in a photon map for every intersection with the scene </li> 
+<li> Normally ray tracing the scene except now when the objects are hit instead of the phong shade you color using photons stored in the neighbourhood of the point </li>
+</ul>
+<br/>
+Explaining the second step in more detail: <br/>
+Emit the photons in the whole of the scene(can be done intelligently to reduce the number of photons by only emitting photons in the direction towards the scene where there are objects). When an intersection is found then store the photon in the photon map and reflect the photon with the right equation and shoot another photon for the shadows by continuing in the same direction. Every photon when emitted has a particular energy it starts with, when absorbing or reflecting maintain the energy accordingly. For example when yellow object reflects, it has absorbed all the wavelengths of the light except yellow (which is reflected back). The energy of the photons also vary after each reflection decreasing monotonically with every collision.<br/>
+<br/>
+<table>
+<tr>
+<td><img src="hitch_photon"/> </td>
+</tr><tr><td><img src="tentacles"/></td>
+</tr>
+</table>
+</p>
+<p id="parallel">
+<h3>Parallelization, run real time!!</h3>
+Ray tracing is a very simple parallelizeable algorithm. Since each intersection is totally mutually exclusive of the other intersection you can do them in parallel.We use num_threads and give them each row to process. Threads can divide among themselves rows or columns of the whole matrix that we are trying to ray trace. <br>
+<img src="final.gif">
+</p> 
+<p id="Integration">
+<h3>Integration with animator and putting it altogether</h3>
+We finally integrated everything with animator, and now you have a framework where you can animate using the simple framework of the animator. For your animation script, you can now ray trace each frame and show it realtime on the screen. What is more is you can add stuff like cubemaps, bumpmaps and procedural maps on the run in your animation. 
+<br/>
+<br/>
+<center><image src="integ.png" height="60%" width="60%"></center>
+
+<b>Future Work</b>
+<p align="justify">
+<ul>
+<li> Add a framework to do real time ray tracing using Photon Mapping</li>
+<li> Add the ability to rotate camera position on the fly in the ray tracer so that cubemap can be viewed in 360 degree</li>
+<li> Add the ability to apply various image filters in the real time ray traced video to make this software reach completion</li>
+<li> Extend Procedural textures to implement Fractals and different types of procedural textures</li>
+</ul>
+</p>
+
+
+<b>References</b><p>
+
+Ken Perlin<br>
+An Image Synthesizer<br>
+Computer Graphics, 1985, 19 (3), pp 287-296.<br>
+</p>
+<br>
+<p>
+Henrik Wann Jensen: <br>
+"Global Illumination using Photon Maps". <br>
+In "Rendering Techniques '96". Eds. X. Pueyo and P. Schröder. Springer-Verlag, pp. 21-30, 1996<br>
+</p>
+<br>
+<p>Don't Forget to check out the <a href="gallery.html">Image Gallery</a> on the next page</p>
+<br>
+</body>
+</html>
+
+
