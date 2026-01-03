@@ -1,48 +1,275 @@
-<html><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Real Time Ray Tracer Animator Gallery</title><style type="text/css">body{display:block;margin:40px
-auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0
-10px}h1,h2,h3{line-height:1.2}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ray Tracer Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #16161f;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-cyan: #22d3ee;
+            --accent-green: #4ade80;
+            --accent-purple: #a78bfa;
+            --border-color: #27272a;
+            --glow-cyan: rgba(34, 211, 238, 0.15);
+            --glow-green: rgba(74, 222, 128, 0.15);
+        }
 
-<b> For your Eyes Only </b>
-<p align="justify">Following are some of the images we produced while working on this project. Some of the images were produced by accident but they were too good to let go. :) </p>
-<br>
-<center><table>
-<tr><td valign="center" align="center">
-<img src="spheres.bmp" width=300 height=300><br>
-Spheres Ray
-</td><td valign="center" align="center">
-<img src="proctex3.bmp" width=300 height=300><br>
-Blending Colors using noise
-<tr></td><td valign="center" align="center">
-<img src="proctex2.bmp" width=300 height=300><br>
-Blending colors
-</td>
-<td valign="center" align="center">
-<img src="trimesh2_3Dtex.bmp" width=300 height=300><br>
-Trimesh higher noise
-<tr></td><td valign="center" align="center">
-<img src="trimesh2_proctext.bmp" width=300 height=300><br>
-Trimesh lesser noise
-</td><td valign="center" align="center">
-<img src="trimesh3.bmp" width=300 height=300><br>
-trimesh3 Pure noise
-</td>
-<tr><td valign="center" align="center">
-<img src="proctex1.bmp" width=300 height=300><br>
-Another Color blend
-</td><td valign="center" align="center">
-<img src="dragon_mirror.bmp" width=300 height=300><br>
-Dragon Procedural
-<tr></td><td valign="center" align="center">
-<img src="DragonprocText.bmp" width=300 height=300><br>
-Dragon Procedural</td><td valign="center" align="center">
-<img src="proctex.bmp" width=300 height=300><br>
-Another Color blend
-</td></tr>
-</table>
-</center>
-<br>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        .title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title::before {
+            content: '>';
+            color: var(--accent-cyan);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .gallery-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 40px var(--glow-cyan);
+        }
+
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.02);
+        }
+
+        .gallery-caption {
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Footer */
+        .footer-nav {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .footer-nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .footer-nav a:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 20px var(--glow-cyan);
+        }
+
+        .footer-nav a.primary {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .footer-nav a.primary:hover {
+            background: rgba(74, 222, 128, 0.1);
+            box-shadow: 0 0 20px var(--glow-green);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .title {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 40px 16px;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <a href="RayTracer.html" class="back-link">&larr; Back to Project</a>
+            <h1 class="title">Image Gallery</h1>
+            <p class="subtitle">A collection of renders produced while working on this project. Some were happy accidents that were too good to let go.</p>
+        </header>
+
+        <div class="gallery-grid">
+            <figure class="gallery-item">
+                <img src="spheres.bmp" alt="Spheres Ray">
+                <figcaption class="gallery-caption">Spheres Ray Tracing</figcaption>
+            </figure>
+
+            <figure class="gallery-item">
+                <img src="proctex3.bmp" alt="Blending Colors">
+                <figcaption class="gallery-caption">Blending Colors using Noise</figcaption>
+            </figure>
+
+            <figure class="gallery-item">
+                <img src="proctex2.bmp" alt="Blending Colors">
+                <figcaption class="gallery-caption">Color Blending</figcaption>
+            </figure>
+
+            <figure class="gallery-item">
+                <img src="trimesh2_3Dtex.bmp" alt="Trimesh Higher Noise">
+                <figcaption class="gallery-caption">Trimesh - Higher Noise</figcaption>
+            </figure>
+
+            <figure class="gallery-item">
+                <img src="trimesh2_proctext.bmp" alt="Trimesh Lesser Noise">
+                <figcaption class="gallery-caption">Trimesh - Lesser Noise</figcaption>
+            </figure>
+
+            <figure class="gallery-item">
+                <img src="trimesh3.bmp" alt="Trimesh Pure Noise">
+                <figcaption class="gallery-caption">Trimesh - Pure Noise</figcaption>
+            </figure>
+
+            <figure class="gallery-item">
+                <img src="proctex1.bmp" alt="Color Blend">
+                <figcaption class="gallery-caption">Color Blend Variation</figcaption>
+            </figure>
+
+            <figure class="gallery-item">
+                <img src="dragon_mirror.bmp" alt="Dragon Procedural">
+                <figcaption class="gallery-caption">Dragon Mirror</figcaption>
+            </figure>
+
+            <figure class="gallery-item">
+                <img src="DragonprocText.bmp" alt="Dragon Procedural Texture">
+                <figcaption class="gallery-caption">Dragon Procedural Texture</figcaption>
+            </figure>
+
+            <figure class="gallery-item">
+                <img src="proctex.bmp" alt="Color Blend">
+                <figcaption class="gallery-caption">Procedural Color Blend</figcaption>
+            </figure>
+        </div>
+
+        <div class="footer-nav">
+            <a href="RayTracer.html" class="primary">&larr; Back to Project</a>
+            <a href="index.html">Home</a>
+        </div>
+    </div>
 </body>
-</html
+</html>

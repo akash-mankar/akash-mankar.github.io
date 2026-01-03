@@ -1,48 +1,420 @@
-<html><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Akash Mankar</title><style type="text/css">body{display:block;margin:40px
-auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0
-10px}h1,h2,h3{line-height:1.2}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Akash Mankar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #16161f;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-cyan: #22d3ee;
+            --accent-green: #4ade80;
+            --accent-purple: #a78bfa;
+            --border-color: #27272a;
+            --glow-cyan: rgba(34, 211, 238, 0.15);
+            --glow-green: rgba(74, 222, 128, 0.15);
+        }
 
-<h1> Akash Mankar </h1>
-<p>I completed my Masters in Computer Science in May 2014 from  <a href = http://www.cs.utexas.edu>the Department of Computer Science</a> at <a href= http://www.utexas.edu>The University of Texas at Austin</a>.</br>
-I also worked as a Graduate Teaching Assistant for <a href = http://www.cs.utexas.edu/~pingali> Prof. Keshav Pingali</a> for <a href = http://www.cs.utexas.edu/~pingali/CS378/2012fa/ >CS378/CSE392 Programming for Performance</a></br>
-Before getting here I worked for<a href = http://www.nvidia.com> NVIDIA Corporation </a> as a System Software Engineer for 3 years in the Display Driver Team for Windows.</br>
-I completed my Undergraduate in Information Technology From <a href = http://www.coep.org.in>College of Engineering Pune (COEP)</a></br>
-Currently I'm working as a Software Engineer in <a href = http://www.ni.com>National Instruments</a> in R&D group.</br>
-</p>
-Contact me at </br>
-Email: akash<em> [dot]</em> cs<em> [at]</em> utexas<em> [dot]</em> edu<br>
-<a href= https://www.linkedin.com/profile/view?id=63894358>LinkedIn</a> <br>
-<a href= https://github.com/akash-mankar>Github</a><br>
-<a href= http://stackoverflow.com/users/2352768/akash-mankar>Stack OverFlow</a><br>
-<br>
-<b>Subjects</b>
-<ul>
-<li> Computer Architecture EE360N under Prof. Derek Chiou</li>
-<li> Computer Graphics     CS384G under Prof. Don Fussell</li>
-<li> Distributed Computing CS380D under Prof. Lorenzo Alvisi</li>
-<li> Prediction mechanisms in Computer Architecture CS395T under Prof. Calvin Lin </li>
-<li> Formal Semantics and Verification CS388S under Prof. E.Allen Emerson</li>
-<li> Intro to Mathematical Logic CS388L under Prof. Vladimir Lifschitz</li>
-<li> Advanced Programming Tools EE382V under Prof. Adnan Aziz</li>
-<li> Human Computation and Crowdsourcing CS395T under Prof. Matt Lease</li>
-<li> Beginning Social Dance PED 103L under Prof. Campbell Miller</li>
-<li> Statistical Methods I SSC380C under Prof. Hersh Matthew</li>
-<li> Advanced Networking Protocols CS396M under Prof. Simon S. Lam
-</ul>
-<b>Projects </b>
-<ul>
-<li><a href="RayTracer.html">Real Time Ray Tracer Animator</a>
-<li><a href="http://healthyhorns.utexas.edu"> Healthyhorns</a> Mobile Responsive
-<li><a href="http://wellnessnetwork.utexas.edu">Wellness Network</a> Mobile Responsive
-</ul>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<b>Teaching Assistant</b>
-<b>Fall 2012</b>
-<ul>
-<li> Programming for Performance under Prof. Keshav Pingali</li>
-</ul>
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 48px;
+        }
+
+        .name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .name::before {
+            content: '>';
+            color: var(--accent-cyan);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .tagline {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .tagline span {
+            color: var(--accent-green);
+        }
+
+        /* Bio Section */
+        .bio {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bio::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+        }
+
+        .bio p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .bio p:last-child {
+            margin-bottom: 0;
+        }
+
+        .bio a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .bio a:hover {
+            border-bottom-color: var(--accent-cyan);
+            text-shadow: 0 0 8px var(--glow-cyan);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--accent-green);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '#';
+            color: var(--text-muted);
+        }
+
+        /* Contact Links */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .contact-item:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--glow-cyan);
+        }
+
+        .contact-item svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .email-text {
+            font-size: 0.8rem;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 40px;
+        }
+
+        /* Lists */
+        .item-list {
+            list-style: none;
+        }
+
+        .item-list li {
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-left: 2px solid var(--border-color);
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .item-list li:hover {
+            border-left-color: var(--accent-cyan);
+            background: var(--bg-card);
+        }
+
+        .item-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Projects */
+        .project-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .project-card {
+            display: block;
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--glow-cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-card:hover::after {
+            opacity: 1;
+        }
+
+        .project-card h3 {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--accent-cyan);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Teaching */
+        .teaching-item {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .teaching-item h4 {
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .teaching-item p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .footer span {
+            color: var(--accent-green);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .name {
+                font-size: 1.8rem;
+            }
+            .container {
+                padding: 40px 16px;
+            }
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="name">Akash Mankar</h1>
+            <p class="tagline"><span>Software Engineer</span> // Systems & Graphics</p>
+        </header>
+
+        <div class="bio">
+            <p>Master's in Computer Science from <a href="http://www.cs.utexas.edu">UT Austin</a> (May 2014). Former Graduate TA for <a href="http://www.cs.utexas.edu/~pingali">Prof. Keshav Pingali</a> in <a href="http://www.cs.utexas.edu/~pingali/CS378/2012fa/">CS378 Programming for Performance</a>.</p>
+            <p>Previously spent 3 years at <a href="http://www.nvidia.com">NVIDIA Corporation</a> as a System Software Engineer on the Display Driver Team for Windows.</p>
+            <p>Undergraduate in Information Technology from <a href="http://www.coep.org.in">College of Engineering Pune (COEP)</a>.</p>
+            <p>Currently working as a Software Engineer in R&D at <a href="http://www.ni.com">National Instruments</a>.</p>
+        </div>
+
+        <section class="section-title">Contact</section>
+        <div class="contact-grid">
+            <div class="contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span class="email-text">akash.cs@utexas.edu</span>
+            </div>
+            <a href="https://www.linkedin.com/profile/view?id=63894358" class="contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                LinkedIn
+            </a>
+            <a href="https://github.com/akash-mankar" class="contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                GitHub
+            </a>
+            <a href="http://stackoverflow.com/users/2352768/akash-mankar" class="contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 21h-10v-2h10v2zm6-11.665l-1.621-9.335-1.993.346 1.62 9.335 1.994-.346zm-5.964 6.937l-9.746-.975-.186 2.016 9.755.879.177-1.92zm.538-2.587l-9.276-2.608-.526 1.954 9.306 2.5.496-1.846zm1.204-2.413l-8.297-4.864-1.029 1.743 8.298 4.865 1.028-1.744zm1.866-1.467l-5.339-7.829-1.672 1.14 5.339 7.829 1.672-1.14zm-2.644 4.195v8h-12v-8h-2v10h16v-10h-2z"/>
+                </svg>
+                Stack Overflow
+            </a>
+        </div>
+
+        <section>
+            <h2 class="section-title">Projects</h2>
+            <div class="project-grid">
+                <a href="RayTracer.html" class="project-card">
+                    <h3>Real Time Ray Tracer Animator</h3>
+                    <p>Parallelized ray tracer with photon mapping, texture mapping, cubemapping, and bump mapping support.</p>
+                    <span class="project-tag">C++ / Graphics</span>
+                </a>
+                <a href="http://healthyhorns.utexas.edu" class="project-card">
+                    <h3>Healthyhorns</h3>
+                    <p>Mobile responsive health resources platform for UT Austin students.</p>
+                    <span class="project-tag">Web / Responsive</span>
+                </a>
+                <a href="http://wellnessnetwork.utexas.edu" class="project-card">
+                    <h3>Wellness Network</h3>
+                    <p>Mobile responsive wellness and health network application.</p>
+                    <span class="project-tag">Web / Responsive</span>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Coursework</h2>
+            <ul class="item-list">
+                <li><strong>Computer Architecture</strong> EE360N - Prof. Derek Chiou</li>
+                <li><strong>Computer Graphics</strong> CS384G - Prof. Don Fussell</li>
+                <li><strong>Distributed Computing</strong> CS380D - Prof. Lorenzo Alvisi</li>
+                <li><strong>Prediction Mechanisms in Computer Architecture</strong> CS395T - Prof. Calvin Lin</li>
+                <li><strong>Formal Semantics and Verification</strong> CS388S - Prof. E. Allen Emerson</li>
+                <li><strong>Intro to Mathematical Logic</strong> CS388L - Prof. Vladimir Lifschitz</li>
+                <li><strong>Advanced Programming Tools</strong> EE382V - Prof. Adnan Aziz</li>
+                <li><strong>Human Computation and Crowdsourcing</strong> CS395T - Prof. Matt Lease</li>
+                <li><strong>Statistical Methods I</strong> SSC380C - Prof. Hersh Matthew</li>
+                <li><strong>Advanced Networking Protocols</strong> CS396M - Prof. Simon S. Lam</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="section-title">Teaching</h2>
+            <div class="teaching-item">
+                <h4>Graduate Teaching Assistant - Fall 2012</h4>
+                <p>Programming for Performance under Prof. Keshav Pingali</p>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <span>&lt;/&gt;</span> with precision
+        </footer>
+    </div>
 </body>
 </html>

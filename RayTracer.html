@@ -1,209 +1,555 @@
-<html><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Real Time Ray Tracer Animator</title><style type="text/css">body{display:block;margin:40px
-auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0
-10px}h1,h2,h3{line-height:1.2}</style></head><body>
-<h1>A Real time Ray-Tracer Animator</h1>
-<h2> with Photon Mapping, Texture Mapping, Cubemapping and Bump Mapping support</h2>
-Written by <a href="http://www.cs.utexas.edu/~akash/">Akash Mankar</a> and <a href= "http://www.cs.utexas.edu/~nikunj/"> Nikunj Yadav </a><br>
-Fall 2012
-</center>
-<a href="gallery.html">Image Gallery</a>
-<p><hr><p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Real Time Ray Tracer Animator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #16161f;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-cyan: #22d3ee;
+            --accent-green: #4ade80;
+            --accent-purple: #a78bfa;
+            --border-color: #27272a;
+            --glow-cyan: rgba(34, 211, 238, 0.15);
+            --glow-green: rgba(74, 222, 128, 0.15);
+        }
 
-<b>Introduction</b>
-Until now in CS384G, we saw different solutions to different problems in Graphics. For example, use of Bezier curve and B-Splines in order to smoothly animate an object. Phong illumination model in order to ray trace a scene, applying various filters on an image for different types of image processing. But individually each of these concepts, had many limitations. Just smoothly animating an object doesn't make it look real good. On the other hand, ray tracer provides a high quality image but takes considerable time to render a single one. In real life, we want visualizations and animations of high quality sometimes even better than a ray tracer and also in real time. That's why we came up with the idea of this project of providing a single solution to all of the above problems. Any Ray tracer is incomplete without texture mapping, Hence we also added All kinds of texture mapping to our project too.
-</p>
-In this project, we implemented following things:
-<br>
-<ul>
-<li> 2D Texture Mapping </li>
-<li> Bump Mapping </li>
-<li> Cube Mapping </li>
-<li> Procedural/3D Textures </li>
-<li> Photon Mapping</li>
-<li> Parallelizing Ray Tracer to render real time</li>
-<li> A Real Time Ray Tracer Animator </li>
-</ul>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<b>2D Texture Mapping </b>
-In CS384G, We saw 2D Texture Mapping and introduction to 3D Textures. 2D texture mapping is easy but it provides only a good way to handle Textures when parameterization of the texture co-ordinates is easy. For example, 2D Texture mapping for Sphere, Cylinder or Box is very easy but when it comes to using texture mapping for polymeshes, you need to think in different terms. We implemented 2D texture mapping for all the above objects including polymeshes and used Barycentric Coordinates to parameterize 2D Textures for trimeshes. Below are some of our outputs.
-</p>
-<table>
-<tr><td valign="center" align="center">
-<img src="Box2D.bmp" width=300 height=300><br>
-Box-Texture Mapped
-</td><td valign="center" align="center">
-<img src="Dragon2D.bmp" width=350 height=350><br>
-Dragon-Trimesh-Texture mapped with a smiley face
-</table>
-<table>
-</td><td valign="center" align="center">
-<img src="sphere2D.bmp" width=300 height=300><br>
-Sphere- TextureMapped using checkerboard
-</td></tr>
-</table>
-<br>
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
 
-<b>Bump Mapping </b>
-<p align="justify">
-We also added support for Bump Mapping in the Ray Tracer. For this we added a new keyword in the parser to take an image as an input for bump mapping. This image is used to calculate the gradient and the Surface normal is perturbed based on this gradient. One can add following syntax to .ray file to use bump Mapping.
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
 
-<pre>
-norm = bump("skin1.bmp");
-</pre> 
-</p>
-<table>
-<tr><td valign="center" align="center">
-<img src="BumpMapping.bmp" width=300 height=300><br>
-Bump Mapping
-</td><td valign="center" align="center">
-<img src="skin1.bmp" width=300 height=300><br>
-Brick Texture used
-</td></tr>
-</table>
-<br>
+        /* Header */
+        .header {
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-<b>Cube Mapping </b>
-Next task on our hands was to implement cubemapping. Cubemapping provides an easy way to add environment to scenes. We added 6 textures on 6 faces of the cube and treated this as our environment map. If the ray doesn't hit the object, it hits one of the faces of the cubemap thus providing the background for the scene. Below first three images contain a cubemap each and the scene consists of a spherical mirror, thus showing the reflection of the 360 deg cubemap in the mirror.
-<table>
-<tr><td valign="center" align="center">
-<img src="earth.bmp" width=325 height=325><br>
-Earth Mirror
-</td><td valign="center" align="center">
-<img src="mirror.bmp" width=325 height=325><br>
-Scene mirror
-</table>
-<table>
-</td><td valign="center" align="center">
-<img src="Mirror_cubemap.bmp" width=325 height=325><br>
-Terrain mirror
-</td><td valign="center" align="center">
-<img src="trimesh3_cubemap.bmp" width=325 height=325><br>
-Trimesh
-</td></tr>
-</table><br>
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            transition: color 0.2s ease;
+        }
 
-<b> Procedural Textures </b>
-There are two ways to implement 3D Textures. 
-<br>
-<ul>
-<li> 2D Stacking </li>
-<li> Procedural Textures </li>
-</ul> 
-In order to  get better effects we chose procedural textures, instead of 2D Stacking. Procedural Textures are a subset of textures. We don't use actual Texture images to map to the objects. Instead procedural texture is generated with an implicit formula which defines the texture pattern.  Though the image is not fully described, we can represent a lot more details without using a lot of storage. Actually some formulas (such as fractals) allow for infinite level of details, something that an hand drawing artist even full-time cannot achieve. There is also no limitations on the dimensions that the texture can have. <br>
-For our procedural textures, we use <b>Perlin Noise</b>, first described by Perlin in 1985. Perlin noise can be used in 1D,2D or 3D dimensions. There are a various ways to enhance Perlin noise for 3D Textures, some of the well known examples are Turbulence textures and Marble texrtures which are none other than variations of Perlin Noise. <br>
-While using Perlin noise we realize that the effect on different objects can be varied by varying the noisyness of the function and increasing the spacing of between noise.<br>
-For normal objects like sphere, cone, cylinder, Effects produced were better with lesser noise while on polymeshes ,better effects were produced by increasing the noisyness.<br>
-<table>
-<tr><td valign="center" align="center">
-<img src="normal.bmp" width=300 height=300><br>
-Spheres
-</td><td valign="center" align="center">
-<img src="proctextawesome.bmp" width=300 height=300><br>
-Spheres with Texture
-</table>
-<table> 
-</td><td valign="center" align="center">
-<img src="normal2.bmp" width=300 height=300><br>
-Spheres(2)
-</td><td valign="center" align="center">
-<img src="easy5.bmp" width=300 height=300><br>
-Spheres(2) with Proc Textures
-</td></tr>
-</table><br>
-<p>
-Following images show the effects of varying the Perlin noise on the earth cubemap. These variations could be visualized as the variations in clouds seen on a simulated Earth.
-</p>
-<table>
-<tr><td valign="center" align="center">
-<img src="proctextEarth.bmp" width=300 height=300><br>
-Earth cubemap/Less noise
-</td><td valign="center" align="center">
-<img src="Cloudplusearth.bmp" width=300 height=300><br>
-Earth cubemap/higher noise
-</td></tr>
-</table>
-<br>
+        .back-link:hover {
+            color: var(--accent-cyan);
+        }
 
-<p> Following images shows the effect of Procedural Textures on Trimeshes. Note that effects are much better and continuous and easier to implement as compared to parametric 2D textures </p>
-<table>
-<tr><td valign="center" align="center">
-<img src="trimesh2_3Dtex.bmp" width=300 height=300><br>
-Trimesh higher noise
-</td><td valign="center" align="center">
-<img src="trimesh2_proctext.bmp" width=300 height=300><br>
-Trimesh lesser noise
-</td></tr>
-</table><br>
+        .title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-<b>An Artifact with CubeMap + Procedural Texture + 2D Textures</b>
-<table>
-<tr><td valign="center" align="center">
-<img src="artifact.bmp" width=400 height=400><br>
-Cubemap used-> Earth, Procedural Texture-> Perlin Noise, 2D Texture-> brick on the box
-</td></tr>
-</table>
+        .title::before {
+            content: '>';
+            color: var(--accent-cyan);
+        }
 
-<p id="photon_map">
-<h3>Photon Mapping </h3>
-Photon mapping is an alternate approach to lighting. Instead of tracing objects and then finding the phong shade on them, photon mapping uses a different approach. In photon mapping the steps are as following: 
-<ul> 
-<li>Emitting photons from every light source</li> 
-<li>Storing photons in a photon map for every intersection with the scene </li> 
-<li> Normally ray tracing the scene except now when the objects are hit instead of the phong shade you color using photons stored in the neighbourhood of the point </li>
-</ul>
-<br/>
-Explaining the second step in more detail: <br/>
-Emit the photons in the whole of the scene(can be done intelligently to reduce the number of photons by only emitting photons in the direction towards the scene where there are objects). When an intersection is found then store the photon in the photon map and reflect the photon with the right equation and shoot another photon for the shadows by continuing in the same direction. Every photon when emitted has a particular energy it starts with, when absorbing or reflecting maintain the energy accordingly. For example when yellow object reflects, it has absorbed all the wavelengths of the light except yellow (which is reflected back). The energy of the photons also vary after each reflection decreasing monotonically with every collision.<br/>
-<br/>
-<table>
-<tr>
-<td><img src="hitch_photon"/> </td>
-</tr><tr><td><img src="tentacles"/></td>
-</tr>
-</table>
-</p>
-<p id="parallel">
-<h3>Parallelization, run real time!!</h3>
-Ray tracing is a very simple parallelizeable algorithm. Since each intersection is totally mutually exclusive of the other intersection you can do them in parallel.We use num_threads and give them each row to process. Threads can divide among themselves rows or columns of the whole matrix that we are trying to ray trace. <br>
-<img src="final.gif">
-</p> 
-<p id="Integration">
-<h3>Integration with animator and putting it altogether</h3>
-We finally integrated everything with animator, and now you have a framework where you can animate using the simple framework of the animator. For your animation script, you can now ray trace each frame and show it realtime on the screen. What is more is you can add stuff like cubemaps, bumpmaps and procedural maps on the run in your animation. 
-<br/>
-<br/>
-<center><image src="integ.png" height="60%" width="60%"></center>
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
 
-<b>Future Work</b>
-<p align="justify">
-<ul>
-<li> Add a framework to do real time ray tracing using Photon Mapping</li>
-<li> Add the ability to rotate camera position on the fly in the ray tracer so that cubemap can be viewed in 360 degree</li>
-<li> Add the ability to apply various image filters in the real time ray traced video to make this software reach completion</li>
-<li> Extend Procedural textures to implement Fractals and different types of procedural textures</li>
-</ul>
-</p>
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
 
+        .meta a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
 
-<b>References</b><p>
+        .meta a:hover {
+            text-decoration: underline;
+        }
 
-Ken Perlin<br>
-An Image Synthesizer<br>
-Computer Graphics, 1985, 19 (3), pp 287-296.<br>
-</p>
-<br>
-<p>
-Henrik Wann Jensen: <br>
-"Global Illumination using Photon Maps". <br>
-In "Rendering Techniques '96". Eds. X. Pueyo and P. Schröder. Springer-Verlag, pp. 21-30, 1996<br>
-</p>
-<br>
-<p>Don't Forget to check out the <a href="gallery.html">Image Gallery</a> on the next page</p>
-<br>
+        .gallery-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 6px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            margin-top: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .gallery-link:hover {
+            background: rgba(34, 211, 238, 0.1);
+            box-shadow: 0 0 20px var(--glow-cyan);
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--accent-green);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '#';
+            color: var(--text-muted);
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .section a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .section a:hover {
+            border-bottom-color: var(--accent-cyan);
+        }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            display: grid;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-left: 2px solid var(--accent-cyan);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .feature-list li:hover {
+            background: var(--bg-card);
+            border-left-color: var(--accent-green);
+        }
+
+        /* Code Block */
+        pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            margin: 16px 0;
+        }
+
+        /* Image Gallery */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .image-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .image-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-card figcaption {
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            background: var(--bg-secondary);
+        }
+
+        /* Single Image */
+        .single-image {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            max-width: 500px;
+            margin: 24px auto;
+        }
+
+        .single-image img {
+            width: 100%;
+            display: block;
+        }
+
+        .single-image figcaption {
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            background: var(--bg-secondary);
+        }
+
+        /* GIF container */
+        .gif-container {
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .gif-container img {
+            max-width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        /* References */
+        .reference {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-left: 2px solid var(--accent-purple);
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer nav */
+        .footer-nav {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer-nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-green);
+            border-radius: 6px;
+            color: var(--accent-green);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .footer-nav a:hover {
+            background: rgba(74, 222, 128, 0.1);
+            box-shadow: 0 0 20px var(--glow-green);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .title {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 40px 16px;
+            }
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <a href="index.html" class="back-link">&larr; Back to Home</a>
+            <h1 class="title">Real Time Ray Tracer Animator</h1>
+            <p class="subtitle">Photon Mapping, Texture Mapping, Cubemapping, and Bump Mapping</p>
+            <div class="meta">
+                <span>By <a href="http://www.cs.utexas.edu/~akash/">Akash Mankar</a> & <a href="http://www.cs.utexas.edu/~nikunj/">Nikunj Yadav</a></span>
+                <span>// Fall 2012</span>
+            </div>
+            <a href="gallery.html" class="gallery-link">View Image Gallery &rarr;</a>
+        </header>
+
+        <section class="section">
+            <h2 class="section-title">Introduction</h2>
+            <p>Until now in CS384G, we saw different solutions to different problems in Graphics. For example, use of Bezier curve and B-Splines in order to smoothly animate an object. Phong illumination model in order to ray trace a scene, applying various filters on an image for different types of image processing. But individually each of these concepts had many limitations.</p>
+            <p>Just smoothly animating an object doesn't make it look real good. On the other hand, ray tracer provides a high quality image but takes considerable time to render a single one. In real life, we want visualizations and animations of high quality sometimes even better than a ray tracer and also in real time. That's why we came up with the idea of this project of providing a single solution to all of the above problems.</p>
+
+            <p>In this project, we implemented:</p>
+            <ul class="feature-list">
+                <li>2D Texture Mapping</li>
+                <li>Bump Mapping</li>
+                <li>Cube Mapping</li>
+                <li>Procedural/3D Textures</li>
+                <li>Photon Mapping</li>
+                <li>Parallelizing Ray Tracer to render real time</li>
+                <li>A Real Time Ray Tracer Animator</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">2D Texture Mapping</h2>
+            <p>In CS384G, we saw 2D Texture Mapping and introduction to 3D Textures. 2D texture mapping is easy but it provides only a good way to handle Textures when parameterization of the texture co-ordinates is easy. For example, 2D Texture mapping for Sphere, Cylinder or Box is very easy but when it comes to using texture mapping for polymeshes, you need to think in different terms.</p>
+            <p>We implemented 2D texture mapping for all the above objects including polymeshes and used Barycentric Coordinates to parameterize 2D Textures for trimeshes.</p>
+
+            <div class="image-grid">
+                <figure class="image-card">
+                    <img src="Box2D.bmp" alt="Box Texture Mapped">
+                    <figcaption>Box - Texture Mapped</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="Dragon2D.bmp" alt="Dragon Trimesh">
+                    <figcaption>Dragon Trimesh - Smiley Face Texture</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="sphere2D.bmp" alt="Sphere Texture Mapped">
+                    <figcaption>Sphere - Checkerboard Texture</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Bump Mapping</h2>
+            <p>We also added support for Bump Mapping in the Ray Tracer. For this we added a new keyword in the parser to take an image as an input for bump mapping. This image is used to calculate the gradient and the Surface normal is perturbed based on this gradient.</p>
+
+            <pre>norm = bump("skin1.bmp");</pre>
+
+            <div class="image-grid">
+                <figure class="image-card">
+                    <img src="BumpMapping.bmp" alt="Bump Mapping">
+                    <figcaption>Bump Mapping Result</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="skin1.bmp" alt="Brick Texture">
+                    <figcaption>Brick Texture Used</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Cube Mapping</h2>
+            <p>Cubemapping provides an easy way to add environment to scenes. We added 6 textures on 6 faces of the cube and treated this as our environment map. If the ray doesn't hit the object, it hits one of the faces of the cubemap thus providing the background for the scene.</p>
+            <p>The first three images contain a cubemap each and the scene consists of a spherical mirror, showing the reflection of the 360 degree cubemap in the mirror.</p>
+
+            <div class="image-grid">
+                <figure class="image-card">
+                    <img src="earth.bmp" alt="Earth Mirror">
+                    <figcaption>Earth Mirror</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="mirror.bmp" alt="Scene Mirror">
+                    <figcaption>Scene Mirror</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="Mirror_cubemap.bmp" alt="Terrain Mirror">
+                    <figcaption>Terrain Mirror</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="trimesh3_cubemap.bmp" alt="Trimesh">
+                    <figcaption>Trimesh with Cubemap</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Procedural Textures</h2>
+            <p>There are two ways to implement 3D Textures: 2D Stacking and Procedural Textures. We chose procedural textures for better effects. Procedural Textures are generated with an implicit formula which defines the texture pattern. Though the image is not fully described, we can represent a lot more details without using a lot of storage.</p>
+            <p>For our procedural textures, we use <strong>Perlin Noise</strong>, first described by Perlin in 1985. Perlin noise can be used in 1D, 2D or 3D dimensions. There are various ways to enhance Perlin noise for 3D Textures, such as Turbulence textures and Marble textures.</p>
+
+            <div class="image-grid">
+                <figure class="image-card">
+                    <img src="normal.bmp" alt="Spheres">
+                    <figcaption>Spheres - Original</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="proctextawesome.bmp" alt="Spheres with Texture">
+                    <figcaption>Spheres with Procedural Texture</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="normal2.bmp" alt="Spheres 2">
+                    <figcaption>Spheres (2) - Original</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="easy5.bmp" alt="Spheres with Proc Textures">
+                    <figcaption>Spheres (2) with Proc Textures</figcaption>
+                </figure>
+            </div>
+
+            <p>The following images show the effects of varying the Perlin noise on the earth cubemap. These variations could be visualized as the variations in clouds seen on a simulated Earth.</p>
+
+            <div class="image-grid">
+                <figure class="image-card">
+                    <img src="proctextEarth.bmp" alt="Earth Less Noise">
+                    <figcaption>Earth Cubemap - Less Noise</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="Cloudplusearth.bmp" alt="Earth Higher Noise">
+                    <figcaption>Earth Cubemap - Higher Noise</figcaption>
+                </figure>
+            </div>
+
+            <p>The following images show the effect of Procedural Textures on Trimeshes. Effects are much better and continuous compared to parametric 2D textures.</p>
+
+            <div class="image-grid">
+                <figure class="image-card">
+                    <img src="trimesh2_3Dtex.bmp" alt="Trimesh Higher Noise">
+                    <figcaption>Trimesh - Higher Noise</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="trimesh2_proctext.bmp" alt="Trimesh Lesser Noise">
+                    <figcaption>Trimesh - Lesser Noise</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Combined Artifact</h2>
+            <p>CubeMap + Procedural Texture + 2D Textures</p>
+
+            <figure class="single-image">
+                <img src="artifact.bmp" alt="Combined Artifact">
+                <figcaption>Earth Cubemap + Perlin Noise + Brick Texture on Box</figcaption>
+            </figure>
+        </section>
+
+        <section class="section" id="photon_map">
+            <h2 class="section-title">Photon Mapping</h2>
+            <p>Photon mapping is an alternate approach to lighting. Instead of tracing objects and then finding the phong shade on them, photon mapping uses a different approach:</p>
+
+            <ul class="feature-list">
+                <li>Emitting photons from every light source</li>
+                <li>Storing photons in a photon map for every intersection with the scene</li>
+                <li>Ray tracing the scene - when objects are hit, color using photons stored in the neighbourhood</li>
+            </ul>
+
+            <p>Emit the photons in the whole of the scene. When an intersection is found, store the photon in the photon map and reflect the photon with the right equation. Every photon when emitted has a particular energy it starts with. When absorbing or reflecting, maintain the energy accordingly. For example, when a yellow object reflects, it has absorbed all the wavelengths of the light except yellow.</p>
+
+            <div class="image-grid">
+                <figure class="image-card">
+                    <img src="hitch_photon" alt="Photon Mapping">
+                    <figcaption>Photon Mapping Demo</figcaption>
+                </figure>
+                <figure class="image-card">
+                    <img src="tentacles" alt="Tentacles">
+                    <figcaption>Tentacles Render</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="section" id="parallel">
+            <h2 class="section-title">Parallelization - Real Time!</h2>
+            <p>Ray tracing is a very simple parallelizable algorithm. Since each intersection is totally mutually exclusive of the other intersection, you can do them in parallel. We use num_threads and give them each row to process. Threads can divide among themselves rows or columns of the whole matrix that we are trying to ray trace.</p>
+
+            <div class="gif-container">
+                <img src="final.gif" alt="Real Time Ray Tracing Animation">
+            </div>
+        </section>
+
+        <section class="section" id="Integration">
+            <h2 class="section-title">Integration with Animator</h2>
+            <p>We finally integrated everything with animator. Now you have a framework where you can animate using the simple framework of the animator. For your animation script, you can now ray trace each frame and show it realtime on the screen. You can add cubemaps, bumpmaps and procedural maps on the run in your animation.</p>
+
+            <figure class="single-image">
+                <img src="integ.png" alt="Integration Diagram">
+                <figcaption>System Integration Architecture</figcaption>
+            </figure>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Future Work</h2>
+            <ul class="feature-list">
+                <li>Add a framework to do real time ray tracing using Photon Mapping</li>
+                <li>Add the ability to rotate camera position on the fly so cubemap can be viewed in 360 degrees</li>
+                <li>Add the ability to apply various image filters in the real time ray traced video</li>
+                <li>Extend Procedural textures to implement Fractals and different types of procedural textures</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">References</h2>
+            <div class="reference">
+                Ken Perlin<br>
+                <strong>"An Image Synthesizer"</strong><br>
+                Computer Graphics, 1985, 19 (3), pp 287-296.
+            </div>
+            <div class="reference">
+                Henrik Wann Jensen<br>
+                <strong>"Global Illumination using Photon Maps"</strong><br>
+                In "Rendering Techniques '96". Eds. X. Pueyo and P. Schröder. Springer-Verlag, pp. 21-30, 1996
+            </div>
+        </section>
+
+        <div class="footer-nav">
+            <a href="gallery.html">View Full Image Gallery &rarr;</a>
+        </div>
+    </div>
 </body>
 </html>
-
-
